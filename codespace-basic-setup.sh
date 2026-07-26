@@ -1,4 +1,5 @@
-#!/usr/bin/env bash
+#!/usr/bin/env
+#Modified by Entraptadoeztech and Crax!
 set -euxo pipefail
 
 export PATH="$HOME/.cargo/bin:$HOME/.local/bin:$HOME/.local/share/pnpm:$PATH"

@@ -47,7 +47,7 @@ Some of the popular websites that Scramjet supports include:
 - Build the rewriter with `pnpm rewriter:build`
 - Build Scramjet with `pnpm build`
 
-#### Lets backtrack how do we install the dependencies(not using pnpm)?
+#### Lets backtrack how do we install the dependencies(not using the pnpm i command)?
 - Open codespace on github 
   and type in `./codespace-basic-setup.sh
 `

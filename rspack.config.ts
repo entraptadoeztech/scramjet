@@ -4,8 +4,8 @@ import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 import { exec, execSync } from "node:child_process";
-const execAsync = promisify(exec);
 import { promisify } from "node:util";
+const execAsync = promisify(exec);
 import { defineConfig } from "@rspack/cli";
 import {
 	rspack,
@@ -25,7 +25,11 @@ if (!process.env.CI) {
 			"pnpm format\ngit update-index --again"
 		);
 		chmodSync(".git/hooks/pre-commit", 0o755);
-	} catch {}
+	} catch (e: any) {
+		console.warn(
+			`Warning: Failed to set up pre-commit hook: ${e.message}`
+		);
+	}
 }
 
 function nodeExternals(
@@ -249,40 +253,44 @@ export const tsloader = {
 	},
 	type: "javascript/auto",
 };
-//TODO: replace this
-function deepmerge<T extends any>(target: T, source: Partial<T>): T {
-	// this whole function is a hack, ignore all of the type errors
-	//@ts-ignore this whole function is a hack 
+
+function deepmerge<T extends Record<string, any>>(
+	target: T,
+	source: Partial<T>
+): T {
 	const output = { ...target };
-	if (isObject(target) && isObject(source)) {
-		Object.keys(source).forEach((key) => {
-			//@ts-ignore this whole function is a hack 
-			if (isObject(source[key])) {
-				//@ts-ignore this whole function is a hack 
-				if (!(key in target)) Object.assign(output, { [key]: source[key] });
-				//@ts-ignore this whole function is a hack 
-				else output[key] = deepmerge(target[key], source[key]);
+	for (const key in source) {
+		if (Object.prototype.hasOwnProperty.call(source, key)) {
+			const sourceValue = source[key];
+			const targetValue = output[key];
+			if (
+				sourceValue &&
+				targetValue &&
+				typeof sourceValue === "object" &&
+				!Array.isArray(sourceValue) &&
+				typeof targetValue === "object" &&
+				!Array.isArray(targetValue)
+			) {
+				output[key] = deepmerge(targetValue, sourceValue);
 			} else {
-				//@ts-ignore this whole function is a hack 
-				Object.assign(output, { [key]: source[key] });
+				output[key] = sourceValue as any;
 			}
-		});
+		}
 	}
 	return output;
 }
 
-function isObject(item: any): item is Record<string, unknown> {
-	return item && typeof item === "object" && !Array.isArray(item);
-}
-const rsDoctorPlugin = process.env.DEBUG ? new RsdoctorRspackPlugin({
-						supports: {
-							parseBundle: true,
-							banner: true,
-						},
-					})
-				: null
+const rsDoctorPlugin = process.env.DEBUG
+	? new RsdoctorRspackPlugin({
+			supports: {
+				parseBundle: true,
+				banner: true,
+			},
+		})
+	: null;
+
 const createGenericConfig = (options: Partial<RspackOptions>) => {
-	const def = {
+	const def: Partial<RspackOptions> = {
 		devtool: "source-map",
 		mode: "development" as Mode,
 		resolve: {
@@ -297,9 +305,7 @@ const createGenericConfig = (options: Partial<RspackOptions>) => {
 				},
 			},
 		},
-		plugin: [
-			rsDoctorPlugin
-		],
+		plugin: rsDoctorPlugin ? [rsDoctorPlugin] : [],
 		optimization: {
 			minimizer: [
 				new rspack.SwcJsMinimizerRspackPlugin({
@@ -310,16 +316,16 @@ const createGenericConfig = (options: Partial<RspackOptions>) => {
 			],
 		},
 	};
-	return defineConfig(deepmerge<RspackOptions>(def as unknown as RspackOptions, options));
+	return defineConfig(deepmerge<RspackOptions>(def as RspackOptions, options));
 };
 
 type ScramjetBuildConfig = {
 	entry: RspackOptions["entry"];
-	output: RspackOptions["output"]
+	output: RspackOptions["output"];
 	rewriterWasm: string;
 	extraConfig?: Partial<RspackOptions>;
 	name: string;
-}
+};
 // Common configuration options for scramjet builds
 const createScramjetConfig = (options: ScramjetBuildConfig) => {
 	const { entry, output, rewriterWasm, extraConfig = {}, name } = options;
@@ -482,7 +488,7 @@ const moduleBundledConfig = createScramjetConfig({
 		experiments: {
 			outputModule: true,
 		},
-	}
+	},
 });
 
 // Type generation configuration

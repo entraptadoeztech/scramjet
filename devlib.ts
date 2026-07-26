@@ -51,7 +51,7 @@ export async function printBanner(image: Buffer, lines: string[]) {
 	const PAD_BOTTOM = 1;
 
 	function blackSpaces(count: number) {
-		count = Math.abs(count);
+		count = Math.max(0, count);
 		return black()(" ".repeat(count));
 	}
 
@@ -73,16 +73,19 @@ export async function printBanner(image: Buffer, lines: string[]) {
 				blackSpaces(textpad) +
 				text +
 				blackSpaces(
-					extraSpaces +
-						totalWidth -
-						contentWidth -
-						PAD_LEFT -
-						textpad -
-						stripAnsi(text).length
+					Math.max(
+						0,
+						extraSpaces +
+							totalWidth -
+							contentWidth -
+							PAD_LEFT -
+							textpad -
+							stripAnsi(text).length
+					)
 				);
 		} else {
 			out +=
-				line + blackSpaces(extraSpaces + totalWidth - contentWidth - PAD_LEFT);
+				line + blackSpaces(Math.max(0, extraSpaces + totalWidth - contentWidth - PAD_LEFT));
 		}
 		out += "\n";
 	}

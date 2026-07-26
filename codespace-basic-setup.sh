@@ -5,7 +5,7 @@ export PATH="$HOME/.cargo/bin:$HOME/.local/bin:$HOME/.local/share/pnpm:$PATH"
 
 mkdir -p "$HOME/.local/bin" "$HOME/.local/lib" "$HOME/.local/share/pnpm"
 
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y #installs rustup
 source "$HOME/.cargo/env"
 hash -r 2>/dev/null || true
 
@@ -13,7 +13,7 @@ rustup toolchain install nightly --component rust-src --target wasm32-unknown-un
 
 export PNPM_HOME="$HOME/.local/share/pnpm"
 export PATH="$PNPM_HOME:$PATH"
-curl -fsSL https://get.pnpm.io/install.sh | sh -
+curl -fsSL https://get.pnpm.io/install.sh | sh - #installs pnpm
 hash -r 2>/dev/null || true
 
 pnpm install --frozen-lockfile

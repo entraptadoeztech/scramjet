@@ -28,7 +28,7 @@ const branch = execSync("git rev-parse --abbrev-ref HEAD", {
 const packagejson = JSON.parse(await fs.readFile("./package.json", "utf-8"));
 const version = packagejson.version;
 
-const DEMO_PORT = process.env.DEMO_PORT || 4141;
+const DEMO_PORT = process.env.DEMO_PORT || 4148;
 const WISP_PORT = process.env.WISP_PORT || 4142;
 
 if (process.env.VITE_WISP_URL) {

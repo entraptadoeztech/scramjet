@@ -1,6 +1,6 @@
 #!/bin/bash
+#Mercury Workshop you should have better documentation!
 set -euxo pipefail
-#modified by Entraptadoeztech and crax!
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 source "$HOME/.cargo/env" # to import rustup in current shell
 curl -fsSL https://get.pnpm.io/install.sh | sh - #installs pnpm

@@ -1,8 +1,12 @@
+branch
+
+﻿
 #!/bin/bash
 set -euxo pipefail
 
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 source "$HOME/.cargo/env" # to import rustup in current shell
+curl -fsSL https://get.pnpm.io/install.sh | sh -
 pnpm i
 cargo install wasm-bindgen-cli --version 0.2.105
 VER=$(curl --silent -qI https://github.com/WebAssembly/binaryen/releases/latest | awk -F '/' '/^location/ {print  substr($NF, 1, length($NF)-1)}'); \

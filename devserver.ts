@@ -10,7 +10,7 @@ import {
 	warnOnUrlEscape,
 	runRspack,
 	black,
-	printBanner
+	printBanner,
 } from "./devlib.ts";
 import rspackConfig from "./rspack.config.ts";
 
